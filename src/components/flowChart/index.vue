@@ -21,6 +21,7 @@
 import G6 from '@antv/g6'
 import registerEdge from './registerEdge'
 import registerNode from './registerNode'
+import registerDomNode from "./registerDomNode";
 export default {
   name: 'flowChart',
   mounted () {
@@ -32,8 +33,11 @@ export default {
   methods: {
     initGraph (width, height) {
       const vm = this
+
+      registerDomNode(G6)
       registerEdge(G6)
       registerNode(G6)
+
 
       const menu = new G6.Menu({
         offsetY: 10,
@@ -64,12 +68,12 @@ export default {
         width,
         height,
         defaultNode: {
-          type: 'flowNode',
+          type: 'domNode',
           style: {
             width: 260,
             height: 40,
             radius: 8,
-            fill: '#fff',
+            fill: 'red',
             stroke: '#CCCCCC'
           },
           labelCfg: {
@@ -90,9 +94,9 @@ export default {
             'zoom-canvas'
           ]
         },
-        plugins: [menu],
         fitView: true,
-        fitCenter: false,
+        fitViewPadding: [100, 0, 0,0 ],
+        plugins: [menu],
         maxZoom: 1
       })
     },
