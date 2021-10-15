@@ -2,14 +2,11 @@ export default G6 => {
   G6.registerNode('flowNode', {
     draw (cfg, group) {
       const style = this.getShapeStyle(cfg, group)
-      const shape = group.addShape('rect', {
-        attrs: {
-          ...style
-        },
-        name: 'flowRect'
-      })
 
       const total = 100
+
+      // 测量文字大小
+      const [textSize] = G6.Util.getTextSize(cfg.label + '', 14)
 
       //元素间距
       const elGap = 8
@@ -24,6 +21,7 @@ export default G6 => {
       const padH = 10;
       const padV = 10;
 
+
       //计算标签的宽度
       let infoSize = 0
       if(cfg.children) {
@@ -31,6 +29,21 @@ export default G6 => {
         const [width] = G6.Util.getTextSize(numberInfo, 12)
         infoSize = width
       }
+
+
+      //计算是双列布局还是单列布局
+      let is2Line = false
+      const totelElementSize = textSize + padH*2 + (cfg.icons || []).length * (16 + elGap) + (infoSize > 0 ? (infoSize + elGap) : 0) + btnSpan + elGap
+      if(totelElementSize - midW * 2 > 0) {
+        is2Line = true
+      }
+
+      const shape = group.addShape('rect', {
+        attrs: {
+          ...style
+        },
+        name: 'flowRect'
+      })
 
       group.addShape('text', {
         attrs: {
