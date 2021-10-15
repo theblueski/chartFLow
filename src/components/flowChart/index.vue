@@ -21,7 +21,13 @@
 import G6 from '@antv/g6'
 import registerEdge from './registerEdge'
 import registerNode from './registerNode'
-import registerDomNode from "./registerDomNode";
+import registerDomNode from "./registerDomNode"
+import essen from '@/assets/essen.png'
+import long from '@/assets/long.png'
+import ship from '@/assets/ship.png'
+import short from '@/assets/short.png'
+import tab from '@/assets/tab.png'
+
 export default {
   name: 'flowChart',
   mounted () {
@@ -68,12 +74,12 @@ export default {
         width,
         height,
         defaultNode: {
-          type: 'domNode',
+          type: 'flowNode',
           style: {
             width: 260,
             height: 40,
             radius: 8,
-            fill: 'red',
+            fill: '#fff',
             stroke: '#CCCCCC'
           },
           labelCfg: {
@@ -108,8 +114,26 @@ export default {
           this.graph.updateItem(item, model)
           this.graph.layout()
           item.toFront()
-        } else {
+        }
+      })
+      this.graph.on('node:dblclick', ({target: {cfg}, item}) => {
+        const model = item.getModel()
+        if (cfg.name === 'flowRect' || cfg.name === 'flowLabel') {
+          const { cacheCanvasBBox } = item.get('group').cfg
+          const { x, y, width, height } = cacheCanvasBBox
+          const { top, left } = this.$refs.mountNode.getBoundingClientRect()
+          this.showInput = true
           this.currentNode.id = model.id
+          this.inputVal = model.label
+          this.position = {
+            x: x + left,
+            y: y + top,
+            width,
+            height
+          }
+          this.$nextTick(() => {
+            this.$refs.inputHandler.focus()
+          })
         }
       })
     },
@@ -164,14 +188,19 @@ export default {
           {
             id: 'Classification',
             label: 'Classification',
+            icons: [essen, long, tab],
             children: [
-              { id: 'Logistic regression', label: 'Logistic regression' },
+              {
+                id: 'Logistic regression',
+                label: 'Logistic regression',
+              },
               { id: 'Linear discriminant analysis', label: 'Linear discriminant analysis' }
             ]
           },
           {
             id: 'Consensus',
-            label: 'Consensus'
+            label: 'Consensus',
+            icons: [essen,short,ship,long,tab]
           },
           {
             id: 'Regression',

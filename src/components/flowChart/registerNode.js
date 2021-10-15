@@ -9,6 +9,29 @@ export default G6 => {
         name: 'flowRect'
       })
 
+      const total = 100
+
+      //元素间距
+      const elGap = 8
+      // 控制展开按钮的宽度
+      const btnSpan = cfg.children ? 24 : 0
+
+      // 方框半径
+      const midW = (style.width / 2)
+      const midH = style.height / 2
+
+      //边框左右编剧
+      const padH = 10;
+      const padV = 10;
+
+      //计算标签的宽度
+      let infoSize = 0
+      if(cfg.children) {
+        const numberInfo = `${cfg.children.length}/${total}`
+        const [width] = G6.Util.getTextSize(numberInfo, 12)
+        infoSize = width
+      }
+
       group.addShape('text', {
         attrs: {
           fontSize: 14,
@@ -20,22 +43,57 @@ export default G6 => {
         name: 'flowLabel'
       })
 
+      if(cfg.icons) {
+        cfg.icons.forEach((i,index) => {
+          group.addShape('image', {
+            attrs: {
+              x: midW -16 -padH - btnSpan - infoSize - index*24 - (btnSpan == 0 || infoSize == 0 ? 0 : elGap),
+              y: (style.height / 2) - 16 - 12,
+              img: i,
+              width: 16,
+              height: 16
+            },
+            name: 'flowDom'
+          })
+        })
+      }
       if (cfg.children) {
-        // group.addShape('image', {
-        //   attrs: {
-        //     x: (style.width / 2) - 16 - 4,
-        //     y: (style.height / 2) - 16 - 4,
-        //     img: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-        //     width: 16,
-        //     height: 16
-        //   },
-        //   name: 'flowDom'
-        // })
+
+        //绘制 10/100 标识
+
+        const backInfo = `/${total}`
+        const [bWidth] = G6.Util.getTextSize(backInfo, 12)
+        const selfWidth = infoSize - bWidth
+        group.addShape('text', {
+          attrs: {
+            text: cfg.children.length,
+            fontSize: 12,
+            stroke: '#FF7F5A',
+            fontWeight: 300,
+            textBaseline: 'top',
+            x: midW - selfWidth - padH - btnSpan - bWidth,
+            y: -5.5
+          }
+        })
+
+        group.addShape('text', {
+          attrs: {
+            text: `/${total}`,
+            fontSize: 12,
+            stroke: '#39B8DB',
+            fontWeight: 300,
+            textBaseline: 'top',
+            x: midW - padH - btnSpan - infoSize/2 - elGap,
+            y: -5.5
+          }
+        })
+
+        // 绘制动作
         group.addShape('circle', {
           attrs: {
             r: 7,
             stroke: '#30373B',
-            x: (style.width / 2) - 7 - 10,
+            x: midW - 7 - padH,
             y: 0
           },
           name: 'actionBtn'
@@ -46,7 +104,7 @@ export default G6 => {
             fontSize: 14,
             stroke: '#30373B',
             cursor: 'pointer',
-            x: (style.width / 2) - 7 - 10 - 4.3,
+            x: midW - 7 - padH - 9/2,
             y: 6
           },
           name: 'actionTxt'
